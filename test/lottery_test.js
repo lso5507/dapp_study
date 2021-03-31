@@ -1,3 +1,4 @@
+const { assert } = require("chai");
 const _deploy_smtart_contract = require("../migrations/2_deploy_smtart_contract");
 const assertRevert = require("./assertRevert");
 const expectEvent = require("./expectEvent");
@@ -16,7 +17,7 @@ contract('Lottery',function([deployer,user1,user2]){
         let pot =  await lottery.getPot();
         assert.equal(pot,0)
     })
-    describe.only("Bet",function(){
+    describe("Bet",function(){
         it('should fail when the bet money is not 0.005 ETH,',async()=>{
             // Fail transection
             await assertRevert(lottery.bet('0xab',{from:user1, value:4000000000000000}))
@@ -42,6 +43,27 @@ contract('Lottery',function([deployer,user1,user2]){
             assert.equal(bet.challenges, '0xab')
             // check log (EVENT)
             await expectEvent.inLogs(receipt.logs,"BET")
+        })
+    })
+
+    describe.only('isMatch',function(){
+        it('should be BettingResult.Win when two characters match', async() =>{
+            let blockhash = '0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e';
+            let matchingResult = await lottery.isMatch('0xab',blockhash)
+            assert.equal(matchingResult,1);
+        })
+        it('should be BettingResult.Fail when two characters match', async() =>{
+            let blockhash = '0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e';
+            let matchingResult = await lottery.isMatch('0xcd',blockhash)
+            assert.equal(matchingResult,0);
+        })
+        it('should be BettingResult.Draw when two characters match', async() =>{
+            let blockhash = '0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e';
+            let matchingResult = await lottery.isMatch('0xa0',blockhash)
+            assert.equal(matchingResult,2);
+
+            matchingResult = await lottery.isMatch('0xfb',blockhash)
+            assert.equal(matchingResult,2);
         })
     })
 });
