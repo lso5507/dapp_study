@@ -113,7 +113,7 @@ contract Lottery{
 
                 }
                 // DRAW,   retund bettor' money
-                if(currentBettingResult == BettingResult.win){
+                if(currentBettingResult == BettingResult.draw){
                     // transfer only bet AMOUNT
                     transferAmount = tranforAfterPayingFee(b.bettor, BET_AMOUNT);
                     // emit DRAW

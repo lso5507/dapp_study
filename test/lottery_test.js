@@ -48,20 +48,22 @@ contract('Lottery',function([deployer,user1,user2]){
     })
     describe('Distribute',function(){
         describe('When the answer is checkable', function(){
-            it.only('should give the user the pot when the answer matches,',async()=>{
+            it('should give the user the pot when the answer matches,',async()=>{
                 //두 글자 다 맞았을 때
                 await lottery.setAnswerForTest('0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e',{from:deployer})
-
+                let user1BalanceTest = await web3.eth.getBalance(user1);
                 await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 1 -> 4
                 await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 2 -> 5
+                console.log(user1BalanceTest)
                 await lottery.betAndDistrubute('0xab',{from:user1,value:betAmount}) // 3 -> 6
                 await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 4 -> 7
                 await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 5 -> 8
                 await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 6 -> 9 
                 let potBefore = await lottery.getPot(); // == 0.01 ETH
                 let user1BalanceBefore = await web3.eth.getBalance(user1);
-
+                //assert.equal(new web3.utils.BN(user1BalanceTest).toString(),new web3.utils.BN(user1BalanceBefore).add(betAmountBN).toString());
                 let receipt7= await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 7 -> 10 //user1에게 pot이 간다
+                
 
                 let potAfter = await lottery.getPot();
                 let user1BalanceAfter = await web3.eth.getBalance(user1); // == before + 0.015 ETH
@@ -72,15 +74,70 @@ contract('Lottery',function([deployer,user1,user2]){
 
                 // user(winer)의 밸런스를 확인
                 user1BalanceBefore = new web3.utils.BN(user1BalanceBefore);
-                assert.equal(betAmountBN.add('5000000000000000').toString(),'15000000000000000')
-             //   assert.equal(user1BalanceBefore.add(potBefore).add(betAmountBN).toString(),new web3.utils.BN(user1BalanceAfter).toString()) ;
+                
+                
+               assert.equal(user1BalanceBefore.add(potBefore).add(betAmountBN).toString(),new web3.utils.BN(user1BalanceAfter).toString()) ;
             })
             it('should give the user the amount he or she bet when a single character matchs,',async()=>{
                 //한 글자 맞았을 때
+                await lottery.setAnswerForTest('0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e',{from:deployer})
+                let user1BalanceTest = await web3.eth.getBalance(user1);
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 1 -> 4
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 2 -> 5
+                console.log(user1BalanceTest)
+                await lottery.betAndDistrubute('0xaf',{from:user1,value:betAmount}) // 3 -> 6
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 4 -> 7
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 5 -> 8
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 6 -> 9 
+                let potBefore = await lottery.getPot(); // == 0.01 ETH
+                let user1BalanceBefore = await web3.eth.getBalance(user1);
+                //assert.equal(new web3.utils.BN(user1BalanceTest).toString(),new web3.utils.BN(user1BalanceBefore).add(betAmountBN).toString());
+                let receipt7= await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 7 -> 10 //user1에게 pot이 간다
+                
 
+                let potAfter = await lottery.getPot(); // 0.01 ETH
+                let user1BalanceAfter = await web3.eth.getBalance(user1); // == before + 0.005 ETH
+
+                //pot 변화량 확인
+                assert.equal(potBefore.toString(),potAfter.toString());
+                
+
+                // user(winer)의 밸런스를 확인
+                user1BalanceBefore = new web3.utils.BN(user1BalanceBefore);
+                
+                
+               assert.equal(user1BalanceBefore.add(betAmountBN).toString(),new web3.utils.BN(user1BalanceAfter).toString()) ;
             })
-            it('should get the eth or user when the answer does not match at all ,',async()=>{
+            it.only('should get the eth or user when the answer does not match at all ,',async()=>{
                 //다 틀렸을때
+                await lottery.setAnswerForTest('0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e',{from:deployer})
+                let user1BalanceTest = await web3.eth.getBalance(user1);
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 1 -> 4
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 2 -> 5
+                console.log(user1BalanceTest)
+                await lottery.betAndDistrubute('0xef',{from:user1,value:betAmount}) // 3 -> 6
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 4 -> 7
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 5 -> 8
+                await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 6 -> 9 
+                let potBefore = await lottery.getPot(); // == 0.01 ETH
+                let user1BalanceBefore = await web3.eth.getBalance(user1);
+                //assert.equal(new web3.utils.BN(user1BalanceTest).toString(),new web3.utils.BN(user1BalanceBefore).add(betAmountBN).toString());
+                let receipt7= await lottery.betAndDistrubute('0xef',{from:user2,value:betAmount}) // 7 -> 10 //user1에게 pot이 간다
+                
+
+                let potAfter = await lottery.getPot(); // 0.01 ETH
+                let user1BalanceAfter = await web3.eth.getBalance(user1); // == before ETH
+
+                //pot 변화량 확인
+                assert.equal(potBefore.add(betAmountBN).toString(),potAfter.toString());
+                
+
+                // user(winer)의 밸런스를 확인
+                user1BalanceBefore = new web3.utils.BN(user1BalanceBefore);
+                
+                
+               assert.equal(user1BalanceBefore.toString(),new web3.utils.BN(user1BalanceAfter).toString()) ;
+
 
             })
         })
