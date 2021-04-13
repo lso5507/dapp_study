@@ -1,0 +1,3 @@
+[submodule "front"]
+	path = dapp_front
+	url = https://github.com/lso5507/dapp_front
