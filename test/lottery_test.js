@@ -108,7 +108,9 @@ contract('Lottery',function([deployer,user1,user2]){
                 
                assert.equal(user1BalanceBefore.add(betAmountBN).toString(),new web3.utils.BN(user1BalanceAfter).toString()) ;
             })
-            it.only('should get the eth or user when the answer does not match at all ,',async()=>{
+            it('should get the eth or user when the answer does not match at all ,',async()=>{
+
+                console.log(lottery.getBlockNumber)
                 //다 틀렸을때
                 await lottery.setAnswerForTest('0xab5be999ccc07bec74805e3c19c659422ad54e2c5be1110251625cc89d5cbf4e',{from:deployer})
                 let user1BalanceTest = await web3.eth.getBalance(user1);
@@ -142,7 +144,12 @@ contract('Lottery',function([deployer,user1,user2]){
             })
         })
         describe('When the answer is not revealed(Not Minned)', function(){
-            
+            it.only('Block is Not Minned!!',async()=>{
+                let result = await lottery.getPot();
+                let user1BalanceBefore = await web3.eth.getBalance(user1);
+                console.log(user1BalanceBefore);
+
+            })
         })
         describe('When the answer is not revealed(Block Limit is passed)', function(){
             

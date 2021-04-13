@@ -26,7 +26,7 @@ contract Lottery{
     event FAIL(uint256 index, address bettor, uint256 amount, byte challenges, byte answer, uint256 answerBlockNumber);
     event DRAW(uint256 index, address bettor, uint256 amount, byte challenges, byte answer, uint256 answerBlockNumber);
     event REFUND(uint256 index, address bettor, uint256 amount, byte challenges, uint256 answerBlockNumber);
-
+    event NOTMINED(BlockStatus result);
     constructor() public{
         owner = msg.sender;
 
@@ -92,6 +92,7 @@ contract Lottery{
             currentBlockStatus = getBlockStatus(b.answerBlockNumber);
             // checkable : block.number > AnswerBlockNumber && block.number < BLOCK_LIMIT + ANswerBlockNumber 1 
             if(currentBlockStatus == BlockStatus.Checkable){
+                
                 bytes32 answerBlockHash = getAnswerBlockHash(b.answerBlockNumber);
                 currentBettingResult = isMatch(b.challenges,answerBlockHash);
                 // WIN , bettor gets pot
@@ -124,7 +125,8 @@ contract Lottery{
 
             // No Revealed: block.number <=AnswerBlockNumber  2 
             if(currentBlockStatus == BlockStatus.NotRevealed){
-              break;
+                emit NOTMINED(currentBlockStatus);
+                break;
             }
 
             // Block Limit Passed : block.number >= AnswerBlockNumber + BLOCK_LIMIT  3    
