@@ -1,0 +1,6 @@
+이 프로젝트는 인프런(https://www.inflearn.com/course/ethereum-dapp) 강의를 참고하여 작성한 이더리움 로컬환경 프로젝트입니다.
+
+이더리움을 통한 결제 API와 실시간으로 조회 가능한 단순 카드 게임을  만들었습니다.
+
+BackEnd : Solidity
+FrontEnd : React (Functional Component)
